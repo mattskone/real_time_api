@@ -1,25 +1,22 @@
 """A simple key/value store websocket API."""
 
-import tornado.gen
 import tornado.websocket
 
-import handler
+from handler import MessageHandler
 
 
 class SocketHandler(tornado.websocket.WebSocketHandler):
 
     def __init__(self, *args, **kwargs):
-        self.message_handler = handler.MessageHandler()
+        self.message_handler = MessageHandler()
         super().__init__(*args, **kwargs)
 
     def check_origin(self, origin):
         return True
 
-    @tornado.gen.coroutine
     def open(self):
         self.write_message('hello')
 
-    @tornado.gen.coroutine
     def on_message(self, msg):
         try:
             self.write_message(self.message_handler.handle_message(msg))
