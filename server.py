@@ -1,14 +1,16 @@
 """A simple key/value store websocket API."""
 
-import tornado.websocket
+from tornado import gen, ioloop, web, websocket
 
 from handler import MessageHandler
 
 
-class SocketHandler(tornado.websocket.WebSocketHandler):
+class SocketHandler(websocket.WebSocketHandler):
 
     def __init__(self, *args, **kwargs):
-        self.message_handler = MessageHandler()
+        # Inject a different message handler class by providing the class name
+        # with the 'handler_class' kwarg:
+        self.message_handler = kwargs.pop('handler_class', MessageHandler)()
         super().__init__(*args, **kwargs)
 
     def check_origin(self, origin):
@@ -17,14 +19,16 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         self.write_message('hello')
 
+    @gen.coroutine
     def on_message(self, msg):
         try:
-            self.write_message(self.message_handler.handle_message(msg))
+            response = yield self.message_handler.handle_message(msg)
+            self.write_message(response)
         except Exception as e:
             self.write_message(str(e))
 
 def make_app():
-    return tornado.web.Application([
+    return web.Application([
         (r'/connect', SocketHandler),
     ])
 
@@ -32,5 +36,5 @@ def make_app():
 if __name__ == '__main__':
     app = make_app()
     app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
+    ioloop.IOLoop.current().start()
 
