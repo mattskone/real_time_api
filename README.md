@@ -1,7 +1,9 @@
 # real_time_api
-An example websocket API buit on Python, Tornado and MongoDB
+An example websocket API built on Python, Tornado and MongoDB
 
-### Requirements
+### Motivation
+This project is a brief demonstration of a websocket interface to a key/value store based on the following notional business requirements:
+
 Create a service that exposes standard key/value store operations over a websocket interface. 
 Requirements and API spec below.
 
@@ -41,3 +43,14 @@ Example session:
 12:18:10	sent:	    get foo
 12:18:10	received:	hello, world!
 ```
+
+### Operation
+1. Install Python 3.4 and the dependencies in the requirements file (`pip install -r requirements.txt`)
+2. Install and start an instance of MongoDB locally.  Alternatively, you may use an instance hosted remotely, but you'll need to change the connection URI in the `settings.py` file.
+3. `python ./server.py`
+
+### Contributions
+Contributions and feedback are always welcome - just send me a pull request.
+
+### License
+Use of this software is governed by the MIT license [here](LICENSE).
